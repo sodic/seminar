@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package nanopolish;
+
+message EventAlign {
+    string contig = 1;
+    uint64 position = 2;
+    string reference_kmer = 3;
+    uint32 read_index = 4;
+    bool strand = 5;
+
+    string model_kmer = 6;
+    double model_mean = 7;
+    double model_stdv = 8;
+
+    repeated double standardized_levels = 9;
+
+    message Event {
+        uint32 index = 1;
+        double level_mean = 2;
+        double stdv = 3;
+        double length = 4;
+    }
+
+    repeated Event events = 10;
+}
+
+message NanopolishData {
+    repeated EventAlign event_aligns = 1;
+}
+
+
