@@ -149,6 +149,3 @@ class NanopolishOutputData():
         """
         ea = self.get_event_align(position, read_index)
         return (ea.model_kmer, ea.model_mean, ea.model_stdv)
-
-    def get_standardized_levels(self, position, read_index=0):
-        return self.get_event_align(position, read_index).standardized_levels

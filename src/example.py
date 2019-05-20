@@ -39,6 +39,9 @@ print(data.get_line(3))
 print(data.event_aligns[1])
 
 
+print(data.event_aligns[1].events[0].samples)
+
+
 try:
     print(data.get_reference_kmer(7, 0))
     kmer, mean, stdv = data.get_model(7, 0)

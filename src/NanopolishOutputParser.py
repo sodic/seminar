@@ -16,6 +16,9 @@ MODEL_KMER = 9
 MODEL_MEAN = 10
 MODEL_STDV = 11
 STANDARDIZED_LEVEL = 12
+START_IDX = 13
+END_IDX = 14
+SAMPLES = 15
 
 
 class NanopolishOutputParser():
@@ -37,6 +40,9 @@ class NanopolishOutputParser():
         ('model_mean', float),
         ('model_stdv', float),
         ('standardized_level', float),
+        ('start_idx', int),
+        ('end_idx', int),
+        ('samples', lambda x: [float(i) for i in x.split(',')])
     ]
 
     def __init__(self, path):
@@ -132,8 +138,11 @@ class NanopolishOutputParser():
         new_event.level_mean = raw_data[EVENT_LEVEL_MEAN]
         new_event.stdv = raw_data[EVENT_STDV]
         new_event.length = raw_data[EVENT_LENGTH]
-        std_lvl = new_event_align.standardized_levels.append(
-            raw_data[STANDARDIZED_LEVEL])
+        new_event.standardized_level = raw_data[STANDARDIZED_LEVEL]
+        new_event.start_idx = raw_data[START_IDX]
+        new_event.end_idx = raw_data[END_IDX]
+        for sample in raw_data[SAMPLES]:
+            new_event.samples.append(sample)
 
     def _fill_event_align(self, event_align, raw_data):
         event_align.contig = raw_data[CONTIG]

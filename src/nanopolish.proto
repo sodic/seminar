@@ -7,19 +7,24 @@ message EventAlign {
     uint64 position = 2;
     string reference_kmer = 3;
     uint32 read_index = 4;
+    // True if strand == 't'
     bool strand = 5;
 
     string model_kmer = 6;
     double model_mean = 7;
     double model_stdv = 8;
 
-    repeated double standardized_levels = 9;
-
     message Event {
         uint32 index = 1;
         double level_mean = 2;
         double stdv = 3;
         double length = 4;
+
+        double standardized_level = 5;
+        uint32 start_idx = 6;
+        uint32 end_idx = 7;
+
+        repeated double samples = 8;
     }
 
     repeated Event events = 10;

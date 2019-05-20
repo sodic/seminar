@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='nanopolish',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x10nanopolish.proto\x12\nnanopolish\"\xbb\x02\n\nEventAlign\x12\x0e\n\x06\x63ontig\x18\x01 \x01(\t\x12\x10\n\x08position\x18\x02 \x01(\x04\x12\x16\n\x0ereference_kmer\x18\x03 \x01(\t\x12\x12\n\nread_index\x18\x04 \x01(\r\x12\x0e\n\x06strand\x18\x05 \x01(\x08\x12\x12\n\nmodel_kmer\x18\x06 \x01(\t\x12\x12\n\nmodel_mean\x18\x07 \x01(\x01\x12\x12\n\nmodel_stdv\x18\x08 \x01(\x01\x12\x1b\n\x13standardized_levels\x18\t \x03(\x01\x12,\n\x06\x65vents\x18\n \x03(\x0b\x32\x1c.nanopolish.EventAlign.Event\x1aH\n\x05\x45vent\x12\r\n\x05index\x18\x01 \x01(\r\x12\x12\n\nlevel_mean\x18\x02 \x01(\x01\x12\x0c\n\x04stdv\x18\x03 \x01(\x01\x12\x0e\n\x06length\x18\x04 \x01(\x01\">\n\x0eNanopolishData\x12,\n\x0c\x65vent_aligns\x18\x01 \x03(\x0b\x32\x16.nanopolish.EventAlignb\x06proto3')
+  serialized_pb=_b('\n\x10nanopolish.proto\x12\nnanopolish\"\xf0\x02\n\nEventAlign\x12\x0e\n\x06\x63ontig\x18\x01 \x01(\t\x12\x10\n\x08position\x18\x02 \x01(\x04\x12\x16\n\x0ereference_kmer\x18\x03 \x01(\t\x12\x12\n\nread_index\x18\x04 \x01(\r\x12\x0e\n\x06strand\x18\x05 \x01(\x08\x12\x12\n\nmodel_kmer\x18\x06 \x01(\t\x12\x12\n\nmodel_mean\x18\x07 \x01(\x01\x12\x12\n\nmodel_stdv\x18\x08 \x01(\x01\x12,\n\x06\x65vents\x18\n \x03(\x0b\x32\x1c.nanopolish.EventAlign.Event\x1a\x99\x01\n\x05\x45vent\x12\r\n\x05index\x18\x01 \x01(\r\x12\x12\n\nlevel_mean\x18\x02 \x01(\x01\x12\x0c\n\x04stdv\x18\x03 \x01(\x01\x12\x0e\n\x06length\x18\x04 \x01(\x01\x12\x1a\n\x12standardized_level\x18\x05 \x01(\x01\x12\x11\n\tstart_idx\x18\x06 \x01(\r\x12\x0f\n\x07\x65nd_idx\x18\x07 \x01(\r\x12\x0f\n\x07samples\x18\x08 \x03(\x01\">\n\x0eNanopolishData\x12,\n\x0c\x65vent_aligns\x18\x01 \x03(\x0b\x32\x16.nanopolish.EventAlignb\x06proto3')
 )
 
 
@@ -61,6 +61,34 @@ _EVENTALIGN_EVENT = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='standardized_level', full_name='nanopolish.EventAlign.Event.standardized_level', index=4,
+      number=5, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='start_idx', full_name='nanopolish.EventAlign.Event.start_idx', index=5,
+      number=6, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='end_idx', full_name='nanopolish.EventAlign.Event.end_idx', index=6,
+      number=7, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='samples', full_name='nanopolish.EventAlign.Event.samples', index=7,
+      number=8, type=1, cpp_type=5, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -73,8 +101,8 @@ _EVENTALIGN_EVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=276,
-  serialized_end=348,
+  serialized_start=248,
+  serialized_end=401,
 )
 
 _EVENTALIGN = _descriptor.Descriptor(
@@ -141,14 +169,7 @@ _EVENTALIGN = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='standardized_levels', full_name='nanopolish.EventAlign.standardized_levels', index=8,
-      number=9, type=1, cpp_type=5, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='events', full_name='nanopolish.EventAlign.events', index=9,
+      name='events', full_name='nanopolish.EventAlign.events', index=8,
       number=10, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -167,7 +188,7 @@ _EVENTALIGN = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=33,
-  serialized_end=348,
+  serialized_end=401,
 )
 
 
@@ -197,8 +218,8 @@ _NANOPOLISHDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=350,
-  serialized_end=412,
+  serialized_start=403,
+  serialized_end=465,
 )
 
 _EVENTALIGN_EVENT.containing_type = _EVENTALIGN
