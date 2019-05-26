@@ -3,7 +3,7 @@ import os
 from bisect import bisect_right
 
 
-class NanopolishOutputData():
+class NanopolishOutputData:
     """
     Interface to nanopolish output data. Takes path to protobuf serialized
     nanopolish output data and offers methods for data retrieval.
@@ -68,7 +68,7 @@ class NanopolishOutputData():
             nevent = 0
         self.iteration_stack.append((nea, nevent))
 
-        return (eas[ea_ind], eas[ea_ind].events[event_ind])
+        return eas[ea_ind], eas[ea_ind].events[event_ind]
 
     def get_line_cnt(self):
         """
@@ -104,7 +104,7 @@ class NanopolishOutputData():
         ind = bisect_right(self.line_search, line_number)
         ea = self.data.event_aligns[ind - 1]
         event = ea.events[line_number - self.line_search[ind]]
-        return (ea, event)
+        return ea, event
 
     def get_event_align(self, position, read_index=0):
         """
@@ -148,4 +148,4 @@ class NanopolishOutputData():
 
         """
         ea = self.get_event_align(position, read_index)
-        return (ea.model_kmer, ea.model_mean, ea.model_stdv)
+        return ea.model_kmer, ea.model_mean, ea.model_stdv
