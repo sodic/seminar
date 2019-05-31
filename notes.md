@@ -71,7 +71,7 @@ Zajednicki event bi onda bio:
 Cini nam se da ovo nije smislen posao. Jedan je napravljen da radi jedno, a drugi drugo. Usporedba ce puno vise reci o nasem algoritmu preslikavanja no sto ce reci o alatima. Cim preslikavanje nije trivijalno, ne vjerujem da se iz konacnih rezultata mogu izvuci ikakvi relevantni zakljucci. Kako cemo odvojiti posljedice algoritama Tomba/Nanopolisha od posljedica naseg algoritma pretvorbe?
 
 Pokusali smo brojne strategije preslikavanja baza u k-torke:
-    - to je sve isto
+    - za event uzmemo u obzir samo prvu bazu kmera
     - kotinuirani output za evente
     - diskretni output za evente
     - trajanja evenata, poceci evenata, svakakve kombinacije
