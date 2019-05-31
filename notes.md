@@ -20,15 +20,22 @@ Nanoporeov base caller na koji se Nanopolish oslanja radi tako da:
 11. `model_mean` - Ocekivanje distribucije za taj model (opet iz tablice).
 12. `standardized_level` - racuna se po formuli koju je Dario napisao na slack.
 13. `start_index` - indeks prvog uzorka sadrzanog u eventu
-14. `start_index` - indeks za jedan veci od poslijednjeg uzorka sadrzanog u
+14. `end_index` - indeks za jedan veci od poslijednjeg uzorka sadrzanog u
 eventu
 15. `samples` - svi uzorci eventa
 
 ## Sto se tice Tomba:
-  - todo: Tko zna vise o tombu neka napise, ja sam paste-ao ono samo
-  - start index i end index ne mozemo usporedit jer tombo gleda samo za kratko ocitanje, trazi svoje indekse,
-  - ZAKLJUCAK: nakon prvog nanopolishovog lazno detektirani novi kmeeer
-  - moguce da tombo gleda samo centralni, a nanopolish to interpretira kao dolazak novog kmeeeeera (koji je isti i zapravo nije novi) dok tombo misli da je novi (drugi je u centru, ali je i dalje isti kmer unutra)
+  - nakon što smo otkrili koja su značenja polja unutar nanopolisha, mogli smo zakljuciti par stvari:
+  	1. `position` možemo poravnati s tombovim indexom baze
+	2. `contig` je identičan
+	3. `event_level_mean`, `event_stdv`, `model_mean` nemožemo usporedivati jer nanopolish dobiva brojeve koji nigdje nisu objašnjeni
+	4. `reference_kmer` i `model_kmer` možemo donekle jednostavno dobiti konkatenirajući baze tombo evenata, uz problem reverznog komplementa, tombo nam ne daje tu informaciju, odnosno kod nanopolish/a nije potpuno jasno kada radi switch izmedu reverznog komplementa i obicnog (možda se ovo može izvući iz imena contige, ako pozicije baza na kraju imena idu od većeg prema manjem)	
+	5. `length` donekle se poklapa, ali poklananje nije 100% točno, dolazi ponekad i do većih odstupanja
+	6. `standardized_level` mislim da nemamo informacije
+	7. `read_index` je za tombo uvijek 0 jer ne podržava multi/read fast5 datoteke
+  - start index i end index ne mozemo usporedit jer tombo gleda samo za kratko ocitanje (signal)
+  - ZAKLJUCAK: nakon prvog nanopolishovog lazno detektirano novog kmer
+  - moguce da tombo gleda samo centralni, a nanopolish to interpretira kao dolazak novog kmera (koji je isti i zapravo nije novi) dok tombo misli da je novi (drugi je u centru, ali je i dalje isti kmer unutra)
 
 ## Sto se tice protobufa:
 Fokusirali smo se na pretvorbu jednog formata outputa u drugi (vise o tome kasnije), Zelimo li mozda imati i datoteku koja izgleda ovako:
