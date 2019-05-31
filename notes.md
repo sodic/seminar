@@ -35,6 +35,8 @@ eventu
 	7. `sampling_rate` - broj baza u sekundi
 	8. `mapped_chrom` - ime kontiga
 
+  - Konverzija struja po danoj formuli ` raw_current = (discrete + offset) / (range / digitisation) ` daje struje reda velicine 3000 pA, dok je struja kod Nanopolisha oko 100 pA. Nije nam jasno zašto je tolika razlika u vrijednostima struja. 
+  
 ## Sto se tice protobufa:
 Fokusirali smo se na pretvorbu jednog formata outputa u drugi (vise o tome kasnije), Zelimo li mozda imati i datoteku koja izgleda ovako:
 ```
