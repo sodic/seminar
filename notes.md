@@ -105,5 +105,5 @@ Smatramo da nam nedostaje šira slika o cijelom projektu. Ne vidimodovoljno jasn
 
 
 **Generalno:**
- - Zašto su reference nekad složene u vise contiga i zašto su neki indeksi posloženi. Ne implicira li pojam 'referenca' nešto potpuno i složeno?
+ - Zašto su reference nekad složene u vise contiga i zašto su neki indeksi preskočeni. Ne implicira li pojam 'referenca' nešto potpuno i složeno?
 
