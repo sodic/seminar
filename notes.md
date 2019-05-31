@@ -25,17 +25,15 @@ eventu
 15. `samples` - svi uzorci eventa
 
 ## Sto se tice Tomba:
-  - nakon što smo otkrili koja su značenja polja unutar nanopolisha, mogli smo zakljuciti par stvari:
-  	1. `position` možemo poravnati s tombovim indexom baze
-	2. `contig` je identičan
-	3. `event_level_mean`, `event_stdv`, `model_mean` nemožemo usporedivati jer nanopolish dobiva brojeve koji nigdje nisu objašnjeni
-	4. `reference_kmer` i `model_kmer` možemo donekle jednostavno dobiti konkatenirajući baze tombo evenata, uz problem reverznog komplementa, tombo nam ne daje tu informaciju, odnosno kod nanopolish/a nije potpuno jasno kada radi switch izmedu reverznog komplementa i obicnog (možda se ovo može izvući iz imena contige, ako pozicije baza na kraju imena idu od većeg prema manjem)	
-	5. `length` donekle se poklapa, ali poklananje nije 100% točno, dolazi ponekad i do većih odstupanja
-	6. `standardized_level` mislim da nemamo informacije
-	7. `read_index` je za tombo uvijek 0 jer ne podržava multi/read fast5 datoteke
-  - start index i end index ne mozemo usporedit jer tombo gleda samo za kratko ocitanje (signal)
-  - ZAKLJUCAK: nakon prvog nanopolishovog lazno detektirano novog kmer
-  - moguce da tombo gleda samo centralni, a nanopolish to interpretira kao dolazak novog kmera (koji je isti i zapravo nije novi) dok tombo misli da je novi (drugi je u centru, ali je i dalje isti kmer unutra)
+  - Podaci o eventu za jednu bazu koje Tombo vraća:
+ 	1. `norm_mean` - normalizirana srednja vrijednost signala
+	2. `norm_stdev` - standardna devijacija signala
+	3. `start` - index početka baze u signalu
+	4. `length` - trajanje baze u signalu (`stdev` i `mean` se računaj s obzirom na signale između start i start + length)
+	5. `base` - string koji predstavlja bazu
+	6. `digitisation`, `offset`, `range` su parametri koje Tombo koristi za pretvorbu signala iz pA
+	7. `sampling_rate` - broj baza u sekundi
+	8. `mapped_chrom` - ime kontige
 
 ## Sto se tice protobufa:
 Fokusirali smo se na pretvorbu jednog formata outputa u drugi (vise o tome kasnije), Zelimo li mozda imati i datoteku koja izgleda ovako:
@@ -47,7 +45,18 @@ Fokusirali smo se na pretvorbu jednog formata outputa u drugi (vise o tome kasni
 ```
 
 ## Sto se tice usporedbe Nanopolisha i Tomba:
-
+  - nakon što smo otkrili koja su značenja polja unutar nanopolisha, mogli smo zakljuciti par stvari:
+  	1. `position` možemo poravnati s tombovim indexom baze
+	2. `contig` je identičan
+	3. `event_level_mean`, `event_stdv`, `model_mean` nemožemo usporedivati jer nanopolish dobiva brojeve koji nigdje nisu objašnjeni
+	4. `reference_kmer` i `model_kmer` možemo donekle jednostavno dobiti konkatenirajući baze tombo evenata, uz problem reverznog komplementa, tombo nam ne daje tu informaciju, odnosno kod nanopolish/a nije potpuno jasno kada radi switch izmedu reverznog komplementa i obicnog (možda se ovo može izvući iz imena contige, ako pozicije baza na kraju imena idu od većeg prema manjem)	
+	5. `length` donekle se poklapa, ali poklananje nije 100% točno, dolazi ponekad i do većih odstupanja
+	6. `standardized_level` mislim da nemamo informacije
+	7. `read_index` je za tombo uvijek 0 jer ne podržava multiread fast5 datoteke
+  - start index i end index ne mozemo usporedit jer tombo gleda samo za kratko ocitanje (signal)
+  - moguce da tombo gleda samo centralni, a nanopolish to interpretira kao dolazak novog kmera (koji je isti i zapravo nije novi) dok tombo misli da je novi (drugi je u centru, ali je i dalje isti kmer unutra)
+  - nakon prvog nanopolishovog lazno detektirano novog kmer usporedbe više nemaju smisla za taj kmer jer ni se svi podaci razlikuju
+  ### Zaključak usporedbe
 Cini nam se da ovo nije smislen posao. Jedan je napravljen da radi jedno, a drugi drugo. Usporedba ce puno vise reci o nasem algoritmu preslikavanja no sto ce reci o alatima. Cim preslikavanje nije trivijalno, ne vjerujem da se iz konacnih rezultata mogu izvuci ikakvi relevantni zakljucci. Kako cemo odvojiti posljedice algoritama Tomba/Nanopolisha od posljedica naseg algoritma pretvorbe?
 
 Pokusali smo brojne strategije preslikavanja baza u k-torke:
@@ -56,7 +65,7 @@ Pokusali smo brojne strategije preslikavanja baza u k-torke:
     - diskretni output za evente
     - trajanja evenata, poceci evenata, svakakve kombinacije
 
-Ako je basecallanje radeno s k-torkama (todo: nek neko pls potvrdi sta tocno pise u onoj Tombovoj tablici, odnosno, jesu li definirano mapiranje preko baza ili k-torki), Tombo dobiva baze algoritmom pretvorbe nad k-torkama (koji je sigurno ireverzibilan i uzrokuje greske). Mi bismo trebali svojim algoritmom (koji takoder neizbjezno uzrokuje greske) vratiti podatke u oblik u kojem su bili prije no sto je Tombo primjenjen. Cini nam se da je to analogno sa sljedecim postupkom:
+Ako je basecallanje radeno s k-torkama, Tombo dobiva baze algoritmom pretvorbe nad k-torkama (koji je sigurno ireverzibilan i uzrokuje greske). Mi bismo trebali svojim algoritmom (koji takoder neizbjezno uzrokuje greske) vratiti podatke u oblik u kojem su bili prije no sto je Tombo primjenjen. Cini nam se da je to analogno sa sljedecim postupkom:
 1. Imamo dvije slike u .bmp formatu, ali ne mozemo ga otvoriti na racunalu.  Mozemo otvarati samo .png
 2. Jednu sliku konvertiramo u .png bez gubitaka, a drugu maksimalnim postavkama kompresije konvertiramo u .jpg (s gubitkom kvalitete), zatim izmislimo algoritam kojim cemo je pretvoriti u .png te ga primjenimo.
 3. Usporedimo dvije dobivene slike.
