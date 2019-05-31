@@ -1,7 +1,7 @@
 ## Uvod
 
 Nanoporeov base caller na koji se Nanopolish oslanja radi tako da:
-1. Nekako je empirijski izgradena tablica normalnih distribucija u kojima se krece struja za svaku mogucu k-torku. U nasem je slucaju k-torka duljine 6. Prema tome, tablica ima 4096 redaka. Ova tablica naziva se *modelom*. Tablica po kojoj radi basecaller koristena u ovom procesu dostupna je ovdje: https://github.com/jts/nanopolish/blob/b9dc627e73816a415e4b96b14e8a8bf53622a6c9/etc/r9-models/r9.4_450bps.nucleotide.6mer.template.model
+1. Nekako je empirijski izgradena tablica normalnih distribucija u kojima se krece struja za svaku mogucu k-torku. U nasem je slucaju k-torka duljine 6. Prema tome, tablica ima 4096 redaka. Ova tablica naziva se *modelom*. Tablica po kojoj radi basecaller koristena u ovom procesu dostupna je ovdje: https://github.com/jts/nanopolish/blob/b9dc627e73816a415e4b96b14e8a8bf53622a6c9/etc/r9-models/r9.4_450bps.nucleotide.6mer.template.model (model koji tombo koristi: https://github.com/nanoporetech/tombo/blob/master/tombo/tombo_models/tombo.DNA.model)
 2. Uzrokuje se struja i racunaju parametri normalne distribucije
 3. U tablici iz koraka 1. pronalazi se normalna distribucija koja najbolje odgovara onoj izracunatoj iz uzorka i zakljucuje se da je rijec o odgovarajućoj k-torci.
 
