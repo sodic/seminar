@@ -97,7 +97,7 @@ Ukratko, smatramo da nam usporedba alata neće puno koristiti. U svakom ćemo sl
 
 **Što se tiče projekta:**
 
-Smatramo da nam nedostaje šira slika o cijelom projektu. Ne vidimo poveznicu između ovoga što radimo sad i detekcije modificiranih nukleotida.  Vjerujemo da je to velik problem te da bismo bili puno učinkovitiji da smo svi 'na istoj stranici'. Bili bismo jako zahvalni kada biste nam probali jednostavno objasniti planirani tijek rada. Recimo, kroz odgovore na sljedeća pitanja.
+Smatramo da nam nedostaje šira slika o cijelom projektu. Ne vidimodovoljno jasnu poveznicu između ovoga što radimo sada i detekcije modificiranih nukleotida.  Vjerujemo da je nedostatak spomenutog konteskta velik problem te da bismo bili puno učinkovitiji da smo svi 'na istoj stranici'. Bili bismo jako zahvalni kada biste nam probali jednostavno objasniti planirani tijek rada. Recimo, kroz odgovore na sljedeća pitanja.
 1. Sto točno je nama cilj dobiti korištenjem Nanopolisha ili Tomba, odnosno, želimo li sa signalima poravnavati baze ili k-torke? Kao što smo već napomenuli, vjerujemo da bi ovo trebao biti najvažniji faktor u odluci o tome koji se alat koristi.
 2. Cijelo vrijeme se govori o 'ekstrakciji podataka'. Koje podatke (format, njihov sadržaj...) mi želimo imati nakon uspješne ekstrakcije?
 3. Kako to što ćemo dobiti pomaže u konačnom cilju, detekciji modificiranih nukleotida?
