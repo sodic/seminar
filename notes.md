@@ -64,7 +64,7 @@ Uz to, Želimo li možda imati i datoteku koja izgleda ovako:
   - nakon što smo otkrili koja su značenja polja unutar nanopolisha, mogli smo zaključiti par stvari:
   	1. Nanopolishov `position` možemo poravnati s tombovim indexom baze
 	2. `contig` je jednak kod oba alata.
-	3. `event_level_mean`, `event_stdv`, `model_mean` - s ovim je bilo puno problema jer rade u potpuno različitim domenama. Na kraju smo uspjeli pronaći naćin da sve vrijednosti prebacimo u domenu pikoampera, ali podatke je još potrebno normalizirati (to planiramo napraviti danas).
+	3. `event_level_mean`, `event_stdv`, `model_mean` - s ovim je bilo puno problema jer rade u potpuno različitim domenama. Na kraju smo uspjeli pronaći naćin da sve vrijednosti prebacimo u domenu pikoampera, ali podatke je još potrebno denormalizirati (to planiramo napraviti danas).
 	4. `reference_kmer` i `model_kmer` možemo donekle jednostavno dobiti konkatenirajući baze tombo evenata, uz problem reverznog komplementa jer nam Tombo o njemu ne daje informaciju, odnosno, kod Nanopolisha nije potpuno jasno kada radi zamjenu između reverznog komplementa i običnog (možda se ovo može izvući iz imena contiga, ako pozicije baza na kraju imena idu od većeg prema manjem)
 	5. `length` - donekle se poklapa, ali poklapnanje nije 100% točno, dolazi ponekad i do većih odstupanja.
 	6. `standardized_level` - u Nanopolishu se racuna po formulama na Slacku, Tombo ga ne bilježi. Trebamo još razjasniti značenje te formule i njenu važnost.
