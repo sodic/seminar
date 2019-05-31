@@ -98,5 +98,4 @@ Smatramo da nam fali sira slika o cijelom projektu. Ne vidimo poveznicu izmedu o
 
 **Generalno:**
  - Zasto su reference nekad slozene u vise contiga i zasto su neki indeksi poslozeni. Ne implicira li pojam 'referenca' nesto potpuno i slozeno?
- - Koji je način na koji nanopolish dobiva brojeve između 80 i 100 ako su veličine zapisane u fast5 fileovima reda veličine 400 - 600? Ova konverzija nigdje nije objašnjena.
 
