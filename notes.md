@@ -33,7 +33,7 @@ eventu
 	5. `base` - string koji predstavlja bazu
 	6. `digitisation`, `offset`, `range` su parametri koje Tombo koristi za pretvorbu signala iz pA
 	7. `sampling_rate` - broj baza u sekundi
-	8. `mapped_chrom` - ime kontige
+	8. `mapped_chrom` - ime kontiga
 
 ## Sto se tice protobufa:
 Fokusirali smo se na pretvorbu jednog formata outputa u drugi (vise o tome kasnije), Zelimo li mozda imati i datoteku koja izgleda ovako:
@@ -43,12 +43,23 @@ Fokusirali smo se na pretvorbu jednog formata outputa u drugi (vise o tome kasni
 	tombo data: ...
 }
 ```
+Zajednicki event bi onda bio:
+```
+{
+	unit32 start_index    		//pocetna pozicija u sekvenci
+	uint 32 end_index		//krajnja pozicija u sekvenci
+	double mean 			// u pA
+	double stdev		
+	string base/kmer			//base ili kmer 
+	repeated double samples
+}
+```
 
 ## Sto se tice usporedbe Nanopolisha i Tomba:
   - nakon što smo otkrili koja su značenja polja unutar nanopolisha, mogli smo zakljuciti par stvari:
   	1. `position` možemo poravnati s tombovim indexom baze
 	2. `contig` je identičan
-	3. `event_level_mean`, `event_stdv`, `model_mean` nemožemo usporedivati jer nanopolish dobiva brojeve koji nigdje nisu objašnjeni
+	3. `event_level_mean`, `event_stdv`, `model_mean` nemožemo usporedivati jer nanopolish dobiva brojeve koji nigdje nisu objašnjeni [nasao sam neku transformaciju nasih norm_mean i norm_stdev vrijednosti iz tomba ali to moramo napisat prvo da bih mogao reci dal je ista vrijednost struja; nanopolish dobiva pA, tj. ono sta bi mi iz tomba trebali dobri]
 	4. `reference_kmer` i `model_kmer` možemo donekle jednostavno dobiti konkatenirajući baze tombo evenata, uz problem reverznog komplementa, tombo nam ne daje tu informaciju, odnosno kod nanopolish/a nije potpuno jasno kada radi switch izmedu reverznog komplementa i obicnog (možda se ovo može izvući iz imena contige, ako pozicije baza na kraju imena idu od većeg prema manjem)	
 	5. `length` donekle se poklapa, ali poklananje nije 100% točno, dolazi ponekad i do većih odstupanja
 	6. `standardized_level` mislim da nemamo informacije
@@ -65,7 +76,7 @@ Pokusali smo brojne strategije preslikavanja baza u k-torke:
     - diskretni output za evente
     - trajanja evenata, poceci evenata, svakakve kombinacije
 
-Ako je basecallanje radeno s k-torkama, Tombo dobiva baze algoritmom pretvorbe nad k-torkama (koji je sigurno ireverzibilan i uzrokuje greske). Mi bismo trebali svojim algoritmom (koji takoder neizbjezno uzrokuje greske) vratiti podatke u oblik u kojem su bili prije no sto je Tombo primjenjen. Cini nam se da je to analogno sa sljedecim postupkom:
+Ako je basecallanje radeno s k-torkama, Tombo dobiva baze algoritmom pretvorbe nad k-torkama (koji je sigurno ireverzibilan i uzrokuje greske) [kak znamo za ireverzibilnost?] . Mi bismo trebali svojim algoritmom (koji takoder neizbjezno uzrokuje greske) vratiti podatke u oblik u kojem su bili prije no sto je Tombo primjenjen. Cini nam se da je to analogno sa sljedecim postupkom:
 1. Imamo dvije slike u .bmp formatu, ali ne mozemo ga otvoriti na racunalu.  Mozemo otvarati samo .png
 2. Jednu sliku konvertiramo u .png bez gubitaka, a drugu maksimalnim postavkama kompresije konvertiramo u .jpg (s gubitkom kvalitete), zatim izmislimo algoritam kojim cemo je pretvoriti u .png te ga primjenimo.
 3. Usporedimo dvije dobivene slike.
@@ -82,7 +93,8 @@ Smatramo da nam fali sira slika o cijelom projektu. Ne vidimo poveznicu izmedu o
 1. Sto tocno je nama cilj dobiti koristenjem Nanopolisha ili Tomba, odnosno, zelimo li poravnavati baze ili k-torke? Kao sto smo vec napomenuli, vjerujemo da bi ovo trebao biti najvazniji faktor u odluci o tome koji se alat koristi.
 2. Cijelo vrijeme se govori o 'ekstrakciji podataka'. Koje podatke (format, njihov sadrzaj...) mi zelimo imati nakon uspjesne ekstrakcije?
 3. Kako to sto cemo dobiti pomaze u konacnom cilju, detekciji modificiranih nukleotida?
-4. Zasto je protobuf usao u racunicu. Argumenti su bili 'lakse koristenje iz raznih jezika'. Tko ce to koristiti osim nas i za sto tocno? Bez ovoga tesko mozemo odluciti sto treba biti u toj protobuf datoteci.
+4. Zasto je protobuf usao u racunicu. Argumenti su bili 'lakse koristenje iz raznih jezika'. Tko ce to koristiti osim nas i za sto tocno? Bez ovoga tesko mozemo odluciti sto treba izmijeniti u toj protobuf datoteci.
+
 
 **Generalno:**
  - Zasto su reference nekad slozene u vise contiga i zasto su neki indeksi poslozeni. Ne implicira li pojam 'referenca' nesto potpuno i slozeno?
