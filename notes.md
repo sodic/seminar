@@ -91,7 +91,7 @@ Sve gore temelji se na pretpostavci da je nama u interesu dobiti k-torke poravna
 
 Smatramo da nam fali sira slika o cijelom projektu. Ne vidimo poveznicu izmedu ovoga sad i detekcije modificiranih nukleotida.  Vjerujemo da je ovo dosta velik problem ta da bismo bili puno ucinkovitiji da smo svi 'na istoj stranici'. Bili bismo jako zahvalni kada bi netko tko je bolje informiran probao jednostavno objasniti planirani tijek rada. Recimo, kroz odgovore na sljedeca pitanja.
 1. Sto tocno je nama cilj dobiti koristenjem Nanopolisha ili Tomba, odnosno, zelimo li poravnavati baze ili k-torke? Kao sto smo vec napomenuli, vjerujemo da bi ovo trebao biti najvazniji faktor u odluci o tome koji se alat koristi.
-2. Cijelo vrijeme se govori o 'ekstrakciji podataka'. Koje podatke (format, njihov sadrzaj...) mi zelimo imati nakon uspjesne ekstrakcije?
+2. Cijelo vrijeme se govori o 'ekstrakciji podataka'. Koje podatke (format, njihov sadrzaj...) mi zelimo imati nakon uspjesne ekstrakcije i je li on drugaciji od trentuno definiranih?
 3. Kako to sto cemo dobiti pomaze u konacnom cilju, detekciji modificiranih nukleotida?
 4. Zasto je protobuf usao u racunicu. Argumenti su bili 'lakse koristenje iz raznih jezika'. Tko ce to koristiti osim nas i za sto tocno? Bez ovoga tesko mozemo odluciti sto treba izmijeniti u toj protobuf datoteci.
 
