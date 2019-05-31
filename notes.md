@@ -5,6 +5,10 @@ Nanoporeov base caller na koji se Nanopolish oslanja radi tako da:
 2. Uzrokuje se struja i računaju parametri normalne distribucije
 3. U tablici iz koraka 1. pronalazi se normalna distribucija koja najbolje odgovara onoj izračunatoj iz uzorka i zaključuje se da je riječ o odgovarajućoj k-torci.
 
+### Zašto Nanopolish više puta očita istu k-torku?
+
+Nanopolish "odluči" da je došlo do promjene k-torke unutar pore kada dođe do velikog skoka u signalu. Nekad su ti skokovi uzrokovani šumom, a ne stvarnom pojavom sljedeće k-torke. Nakon jednog takvog slučajnog skoka, signal se nastavi kretati u običajenim vrijednostima. Na taj se način više puta dobivaju vrlo slični podaci za istu k-torku.
+
 ## Nanopolish:
 
 1. `contig` - Ime contiga koji je dio reference.
@@ -18,6 +22,7 @@ Nanoporeov base caller na koji se Nanopolish oslanja radi tako da:
 9. `event_length` - Vremenski interval u kojem su skupljeni svi uzorci za taj event.
 10. `model_kmer` - K-torka modela, ona koju je basecaller callao na temelju sličnosti distribucija (ona iz gore spomenute tablice).
 11. `model_mean` - Očekivanje distribucije za taj model (opet iz tablice).
+12. `model_stdv` - Standardna devijacija distribucije za taj model (takoder iz tablice).
 12. `standardized_level` - Računa se po formuli koju je Dario napisao na slack.
 13. `start_index` - Indeks prvog uzorka sadržanog u eventu.
 14. `end_index` - Indeks za jedan veći od posljednjeg uzorka sadržanog u eventu.
@@ -35,14 +40,7 @@ Nanoporeov base caller na koji se Nanopolish oslanja radi tako da:
 	8. `mapped_chrom` - Ime kontiga.
   
 ## Protobuff:
-Fokusirali smo se na pretvorbu jednog formata outputa u drugi (više o tome kasnije). Želimo li možda imati i datoteku koja izgleda ovako:
-```
-{
-	nanopolish data: ...
-	tombo data: ...
-}
-```
-Zajednički event bi onda bio:
+Fokusirali smo se na pretvorbu jednog formata outputa u drugi (više o tome kasnije), ali za sada nam se čini da bi zajednički event ovako izgledao:
 ```
 {
 	unit32 start_index    		//početna pozicija u sekvenci
@@ -53,21 +51,29 @@ Zajednički event bi onda bio:
 	repeated double samples
 }
 ```
+Uz to, Želimo li možda imati i datoteku koja izgleda ovako:
+```
+{
+	nanopolish data: ...
+	tombo data: ...
+}
+```
+
 
 ## Usporedba Nanopolisha i Tomba:
   - nakon što smo otkrili koja su značenja polja unutar nanopolisha, mogli smo zaključiti par stvari:
-  	1. `position` možemo poravnati s tombovim indexom baze
-	2. `contig` je identičan
+  	1. Nanopolishov `position` možemo poravnati s tombovim indexom baze
+	2. `contig` je jednak kod oba alata.
 	3. `event_level_mean`, `event_stdv`, `model_mean` ~~ne možemo uspoređivati jer nanopolish dobiva brojeve koji nigdje nisu objašnjeni~~ [sada su nam oba outputa u pA pa ih možemo usporediti] 
-	4. `reference_kmer` i `model_kmer` možemo donekle jednostavno dobiti konkatenirajući baze tombo evenata, uz problem reverznog komplementa jer nam tombo nam ne daje tu informaciju, odnosno kod nanopolisha nije potpuno jasno kada radi zamjenu između reverznog komplementa i običnog (možda se ovo može izvući iz imena contiga, ako pozicije baza na kraju imena idu od većeg prema manjem)	[ne označava li c u imenu kontiga komplement?]
-	5. `length` donekle se poklapa, ali poklananje nije 100% točno, dolazi ponekad i do većih odstupanja [ne bi li trebali gledati broj sampleova samo, posto je lenght za nanopolish vremenski, a za tombo broj baza?]
+	4. `reference_kmer` i `model_kmer` možemo donekle jednostavno dobiti konkatenirajući baze tombo evenata, uz problem reverznog komplementa jer nam Tombo o njemu ne daje informaciju, odnosno, kod Nanopolisha nije potpuno jasno kada radi zamjenu između reverznog komplementa i običnog (možda se ovo može izvući iz imena contiga, ako pozicije baza na kraju imena idu od većeg prema manjem)
+	5. `length` - donekle se poklapa, ali poklapnanje nije 100% točno, dolazi ponekad i do većih odstupanja [ne bi li trebali gledati broj sampleova samo, posto je lenght za nanopolish vremenski, a za tombo broj baza?]
 	6. `standardized_level` ~~mislim da nemamo informacije~~ [računa se po formulama sa slacka, treba razjasniti]
-	7. `read_index` je za tombo uvijek 0 jer ne podržava multiread fast5 datoteke
-  - start index i end index ne mozemo usporediti jer tombo gleda samo za kratko očitanje (signal)
-  - moguće da tombo gleda samo centralni nukelotid, a nanopolish to interpretira kao dolazak novog kmera (koji je isti i zapravo nije novi) dok tombo misli da je novi (drugi je u centru, ali je i dalje isti kmer unutra)
-  - nakon prvog nanopolishovog lažno detektiranog novog kmera usporedbe više nemaju smisla za taj kmer jer se svi podaci razlikuju [provjeriti dal je bit dobro prenesena]
+	7. `read_index` je za Tombo uvijek 0 jer on ne podržava multiread fast5 datoteke
+  - start index i end index ne mozemo usporediti jer Tombo gleda samo za kratko očitanje (signal)
+  - moguće da Tombo gleda samo centralni nukelotid, a nanopolish to interpretira kao dolazak novog kmera (koji je isti i zapravo nije novi) dok tombo misli da je novi (drugi je u centru, ali je i dalje isti kmer unutra)
+  - nakon prvog Nanopolishove lažne detekcije promjene k-torke, usporedbe za tu k-torku više nemaju smisla jer se svi podaci razlikuju [provjeriti dal je bit dobro prenesena]
   ### Zaključak usporedbe
-~~Čini nam se da ovo nije smislen posao.~~ S obzirom ma to da je jedan napravljen da radi jedno, a drugi drugo, usporedba ce puno više reći o našem algoritmu preslikavanja, no što će reći o alatima. Čim preslikavanje nije trivijalno, ne vjerujem da se iz konačnih rezultata mogu izvući ikakvi relevantni zaključci. Kako ćemo odvojiti posljedice algoritama Tomba/Nanopolisha od posljedica našeg algoritma pretvorbe?
+Smatramo da je usporedba rezultata ova dva alata nije nesto sto nam može pomoci. Drugim riječima, možda je vrijeme da ponovno promislimo cijelu ideju. S obzirom ma to da je jedan napravljen da radi jedno, a drugi drugo, usporedba ce puno više reći o našem algoritmu preslikavanja, no što će reći o alatima. Čim preslikavanje nije trivijalno, ne vjerujem da se iz konačnih rezultata mogu izvući ikakvi relevantni zaključci. Kako ćemo odvojiti posljedice algoritama Tomba/Nanopolisha od posljedica našeg algoritma pretvorbe?
 
 Pokušali smo brojne strategije preslikavanja baza u k-torke:
     - za event uzmemo u obzir samo prvu bazu kmera
@@ -75,25 +81,27 @@ Pokušali smo brojne strategije preslikavanja baza u k-torke:
     - diskretni output za evente
     - trajanja evenata, počeci evenata, svakakve kombinacije
 
-Ako je basecallanje rađeno s k-torkama, Tombo dobiva baze algoritmom pretvorbe nad k-torkama (koji je sigurno ireverzibilan i uzrokuje greške) [kak znamo za ireverzibilnost?] . Mi bismo trebali svojim algoritmom (koji također neizbježno uzrokuje greške) vratiti podatke u oblik u kojem su bili prije no što je Tombo primijenjen. Čini nam se da je to analogno sa sljedećim postupkom:
+Ako je basecallanje rađeno s k-torkama, Tombo dobiva baze algoritmom pretvorbe nad k-torkama (koji je ireverzibilan i uzrokuje greške). Znamo da postupak mora početi od k-torki jer se u tablici modela za interpretaciju signala koriste k-torke, a ne baze. Mi bismo trebali svojim algoritmom (koji također neizbježno uzrokuje greške) vratiti podatke u oblik u kojem su bili prije no što je Tombo primijenjen. Čini nam se da je to analogno sa sljedećim postupkom:
 1. Imamo dvije slike u .bmp formatu, ali ne možemo ga otvoriti na računalu.  Možemo otvarati samo .png
 2. Jednu sliku konvertiramo u .png bez gubitaka, a drugu maksimalnim postavkama kompresije konvertiramo u .jpg (s gubitkom kvalitete), zatim izmislimo algoritam kojim ćemo je pretvoriti u .png te ga primijenimo.
 3. Usporedimo dvije dobivene slike.
 
 .bmp slike su ulazi u Tombo i Nanopolish, direktna konverzija u .png je Nanopolish, a konverzija bmp->jpg->png je Tombo.
 
-Sve gore temelji se na pretpostavci da je nama u interesu dobiti k-torke poravnate sa signalima. U slučaju da nisam u pravu i da nam trebaju baze, imamo alat koji radi točno to - Tombo. I Nanopolish i Tombo napravila je ista firma, oba su repozitorija približno jednako popularna i slično aktivna. U svakom nam se slučaju čini logičnije tada uzeti onaj koji radi točno ono što želimo, nego uzeti onaj koji radi nešto slično i sami ga dovesti do kraja.
+Sve gore temelji se na pretpostavci da je nama u interesu dobiti k-torke poravnate sa signalima. U slučaju da nisam u pravu i da nam trebaju baze, imamo alat koji radi točno to - Tombo. I Nanopolish i Tombo napravila je ista firma, oba su repozitorija približno jednako popularna i slične aktivnosti. U svakom nam se slučaju čini logičnije tada uzeti onaj koji radi točno ono što želimo, nego uzeti onaj koji radi nešto slično i sami ga dovesti do kraja.
 
-~~**Ukratko, vjerujemo da trebamo odustati od pitanja "Koji je bolji?" i koristiti onaj koji nam je potreban. Trebaju li nam poravnanja s bazama ili poravnanja s k-torkama?**~~
-**Ukratko, vjerujemo da nam usporedba alata neće puno koristiti s obzirom na to da ćemo morati jedan format (ktorke u nukleotide/nukleotide u ktorke) pretvarati s greškama i zbog toga nećemo dobiti adekvatnu usporedbu. Osim ako nije krajnji cilj točno takva usporedba, a onda je pitanje koji format želimo pretvoriti u drugi?**
+Ukratko, smatramo da nam usporedba alata neće puno koristiti. U svakom ćemo slučaju morati jedan format u drugi pretvarati s greškama (ktorke u nukleotide/nukleotide u ktorke) i zbog toga nećemo dobiti adekvatnu usporedbu.
+
+**Bismo li možda trebali razmotriti mogućnost odustanka od pitanja "Koji je bolji?" i koristiti onaj koji nam je potreban. Trebaju li nam za naš krajnji cilj poravnanja signala s bazama ili poravnanja s k-torkama?**
+
 
 **Što se tiče projekta:**
 
-Smatramo da nam fali šira slika o cijelom projektu. Ne vidimo poveznicu između ovoga sad i detekcije modificiranih nukleotida.  Vjerujemo da je ovo dosta velik problem te da bismo bili puno učinkovitiji da smo svi 'na istoj stranici'. Bili bismo jako zahvalni kada bi nam~~netko tko je bolje informiran~~ probali jednostavno objasniti planirani tijek rada. Recimo, kroz odgovore na sljedeća pitanja.
-1. Sto točno je nama cilj dobiti korištenjem Nanopolisha ili Tomba, odnosno, želimo li poravnavati baze ili k-torke? Kao što smo već napomenuli, vjerujemo da bi ovo trebao biti najvažniji faktor u odluci o tome koji se alat koristi.
-2. Cijelo vrijeme se govori o 'ekstrakciji podataka'. Koje podatke (format, njihov sadržaj...) mi želimo imati nakon uspješne ekstrakcije i je li on drugačiji od trenutno definiranih? Treba li se tim podatcima dodati nešto?
+Smatramo da nam nedostaje šira slika o cijelom projektu. Ne vidimo poveznicu između ovoga što radimo sad i detekcije modificiranih nukleotida.  Vjerujemo da je to velik problem te da bismo bili puno učinkovitiji da smo svi 'na istoj stranici'. Bili bismo jako zahvalni kada biste nam probali jednostavno objasniti planirani tijek rada. Recimo, kroz odgovore na sljedeća pitanja.
+1. Sto točno je nama cilj dobiti korištenjem Nanopolisha ili Tomba, odnosno, želimo li sa signalima poravnavati baze ili k-torke? Kao što smo već napomenuli, vjerujemo da bi ovo trebao biti najvažniji faktor u odluci o tome koji se alat koristi.
+2. Cijelo vrijeme se govori o 'ekstrakciji podataka'. Koje podatke (format, njihov sadržaj...) mi želimo imati nakon uspješne ekstrakcije?
 3. Kako to što ćemo dobiti pomaže u konačnom cilju, detekciji modificiranih nukleotida?
-4. Zašto je protobuf ušao u računicu. Argumenti su bili 'lakše korištenje iz raznih jezika'. Tko će to koristiti osim nas [nije li odgovor Lovro i Dominik]i za što točno? Bez ovoga teško možemo odlučiti što treba izmijeniti u toj protobuf datoteci.
+4. Zašto je protobuf ušao u računicu. Argumenti su bili 'lakše korištenje iz raznih jezika'. Tko će to koristiti osim nas i za što točno? Bez definiranih zahtjeva teško možemo odlučiti što treba izmijeniti u toj protobuf datoteci, ako nam je ona uistinu potrebna (pod definirane zahtjeve ne ubrajamo tipove i ime svakog parametra, nego onaj kasniji viši cilj, na konceptualnoj razini).
 
 
 **Generalno:**
