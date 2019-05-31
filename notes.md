@@ -64,14 +64,14 @@ Uz to, Želimo li možda imati i datoteku koja izgleda ovako:
   - nakon što smo otkrili koja su značenja polja unutar nanopolisha, mogli smo zaključiti par stvari:
   	1. Nanopolishov `position` možemo poravnati s tombovim indexom baze
 	2. `contig` je jednak kod oba alata.
-	3. `event_level_mean`, `event_stdv`, `model_mean` ~~ne možemo uspoređivati jer nanopolish dobiva brojeve koji nigdje nisu objašnjeni~~ [sada su nam oba outputa u pA pa ih možemo usporediti] 
+	3. `event_level_mean`, `event_stdv`, `model_mean` - s ovim je bilo puno problema jer rade u potpuno različitim domenama. Na kraju smo uspjeli pronaći naćin da sve vrijednosti prebacimo u domenu pikoampera, ali podatke je još potrebno normalizirati (to planiramo napraviti danas).
 	4. `reference_kmer` i `model_kmer` možemo donekle jednostavno dobiti konkatenirajući baze tombo evenata, uz problem reverznog komplementa jer nam Tombo o njemu ne daje informaciju, odnosno, kod Nanopolisha nije potpuno jasno kada radi zamjenu između reverznog komplementa i običnog (možda se ovo može izvući iz imena contiga, ako pozicije baza na kraju imena idu od većeg prema manjem)
-	5. `length` - donekle se poklapa, ali poklapnanje nije 100% točno, dolazi ponekad i do većih odstupanja [ne bi li trebali gledati broj sampleova samo, posto je lenght za nanopolish vremenski, a za tombo broj baza?]
-	6. `standardized_level` ~~mislim da nemamo informacije~~ [računa se po formulama sa slacka, treba razjasniti]
+	5. `length` - donekle se poklapa, ali poklapnanje nije 100% točno, dolazi ponekad i do većih odstupanja.
+	6. `standardized_level` - u Nanopolishu se racuna po formulama na Slacku, Tombo ga ne bilježi. Trebamo još razjasniti značenje te formule i njenu važnost.
 	7. `read_index` je za Tombo uvijek 0 jer on ne podržava multiread fast5 datoteke
   - start index i end index ne mozemo usporediti jer Tombo gleda samo za kratko očitanje (signal)
   - moguće da Tombo gleda samo centralni nukelotid, a nanopolish to interpretira kao dolazak novog kmera (koji je isti i zapravo nije novi) dok tombo misli da je novi (drugi je u centru, ali je i dalje isti kmer unutra)
-  - nakon prvog Nanopolishove lažne detekcije promjene k-torke, usporedbe za tu k-torku više nemaju smisla jer se svi podaci razlikuju [provjeriti dal je bit dobro prenesena]
+  - nakon prvog Nanopolishove lažne detekcije promjene k-torke, usporedbe za tu k-torku više nemaju smisla jer se svi podaci razlikuju.
   ### Zaključak usporedbe
 Smatramo da je usporedba rezultata ova dva alata nije nesto sto nam može pomoci. Drugim riječima, možda je vrijeme da ponovno promislimo cijelu ideju. S obzirom ma to da je jedan napravljen da radi jedno, a drugi drugo, usporedba ce puno više reći o našem algoritmu preslikavanja, no što će reći o alatima. Čim preslikavanje nije trivijalno, ne vjerujem da se iz konačnih rezultata mogu izvući ikakvi relevantni zaključci. Kako ćemo odvojiti posljedice algoritama Tomba/Nanopolisha od posljedica našeg algoritma pretvorbe?
 
