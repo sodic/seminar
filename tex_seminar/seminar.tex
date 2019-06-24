@@ -1,0 +1,327 @@
+\documentclass[]{article}
+\usepackage[margin=1.2in]{geometry}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{color}
+
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+	language=C++,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=none,
+	numberstyle=\tiny\color{gray},
+	keywordstyle=\color{blue},
+	commentstyle=\color{dkgreen},
+	stringstyle=\color{mauve},
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=3
+}
+
+%opening
+\title{Seminar}
+\author{Dario Babojelić, Filip Sodić}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduction}
+\section{Nanopolish}
+
+
+\newpage
+\section{Protobuf}
+We created a protobuf message specification for easier access to nanopolish 
+output data. Protobuf is used to serialize and retrieve structured data.
+\footnote{\url{https://developers.google.com/protocol-buffers/}}
+As you can see protobuf fields match nanopolish output format. 
+
+\begin{lstlisting}
+syntax = "proto3";
+
+package nanopolish;
+
+message EventAlign {
+	string contig = 1;
+	uint64 position = 2;
+	string reference_kmer = 3;
+	uint32 read_index = 4;
+	// True if strand == 't'
+	bool strand = 5;
+
+	string model_kmer = 6;
+	double model_mean = 7;
+	double model_stdv = 8;
+
+	message Event {
+		uint32 index = 1;
+		double level_mean = 2;
+		double stdv = 3;
+		double length = 4;
+
+		double standardized_level = 5;
+		uint32 start_idx = 6;
+		uint32 end_idx = 7;
+
+		repeated double samples = 8;
+	}
+
+	repeated Event events = 10;
+}
+
+message NanopolishData {
+	repeated EventAlign event_aligns = 1;
+}
+\end{lstlisting}
+
+
+
+\section{Program specification}
+Program 
+\footnote{https://github.com/sodic/seminar/tree/master/src}
+was designed to make it easier to manipulate nanopolish eventalign 
+output. It can parse nanopolish text output, serialize it as protobuf, 
+deserialize and provide access to data. It was written in Python 3 and does
+not depend on any non-standard module. If you wish to change protobuf message
+specification you must install protocol buffer compiler for Python
+\footnote{https://github.com/protocolbuffers/protobuf}.
+Otherwise you can use \textit{nanopolish\_pb2.py} file which is generated from
+\textit{nanopolish.proto}.
+
+\subsection{Usage}
+Program consists of two classes, \textit{NanopolishOutputParser.py} and 
+\textit{NanopolishOutputData.py}. First class can parse nanopolish 
+eventalign text output and write a protobuf serialization string in file.
+Second class is a interface to nanopolish eventalign output data. It takes 
+path to protobuf serialized data and offers methods for data retrieval. 
+Example of usage is given below. 
+
+
+\lstset{frame=tb,
+	language=Python,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=none,
+	numberstyle=\tiny\color{gray},
+	keywordstyle=\color{blue},
+	commentstyle=\color{dkgreen},
+	stringstyle=\color{mauve},
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=3
+}
+\begin{lstlisting}
+
+
+import NanopolishOutputParser as nop
+import NanopolishOutputData as nod
+import sys
+
+if __name__ == '__main__':
+# parse nanopolish txt file and serialize it
+parser = nop.NanopolishOutputParser(sys.argv[1])
+parser.serialize(sys.argv[2])
+
+
+# read data from protobuf serialization
+data = nod.NanopolishOutputData(sys.argv[2])
+
+# iterate through lines
+for ea, event in data:
+	if ea.position == 3:
+		print(event)
+
+print()
+print()
+# iterate through event_aligns
+# Should give same output as previous for loop.
+# Every event_align is unique by (position, read_index)
+for ea in data.event_aligns:
+	if ea.position == 3:
+		for event in ea.events:
+			print(event)
+
+# data retrieval
+
+
+# retrieve specific line
+# log time
+# Prints pair, first element is event align,
+# second is specific event on that line.
+print(data.get_line(3))
+
+# retrieve specific event_align
+# constant time
+print(data.event_aligns[1])
+
+
+print(data.event_aligns[1].events[0].samples)
+
+
+try:
+	print(data.get_reference_kmer(7, 0))
+			kmer, mean, stdv = data.get_model(7, 0)
+except KeyError:
+	print("There is no event align with read_index = 0 && position = 7")
+
+# print all events on event_align with read_index = 0 && position = 9
+# raises KeyError if there is no such
+print(data.get_events(9))
+\end{lstlisting}
+\newpage
+
+\section{References}
+\newpage
+
+\section{Documentation}
+\begin{lstlisting}
+class NanopolishOutputParser:
+	"""
+	Nanopolish txt output parser, produces protobuf serialization if 'serialize' method is called.
+	"""
+	
+	def __init__(self, path):
+		"""
+		
+		Parameters
+		----------
+		path: string
+			Path to file containing nanopolish output data.
+		
+		Returns
+		-------
+	
+		"""
+	
+	def serialize(self, path):
+		"""
+		Writes protobuf serialization string in file.
+		Data is sorted by pairs (read_index, position).
+		
+		Parameters
+		----------
+		path: string
+			Path to file where serialized string of data should be written.
+		
+		Returns
+		-------
+		
+		"""
+
+
+
+class NanopolishOutputData:
+	"""
+	Interface to nanopolish output data. Takes path to protobuf serialized
+	nanopolish output data and offers methods for data retrieval.
+	"""
+	
+	def __init__(self, path):
+		"""
+		
+		Parameters
+		----------
+		path: string
+			Path to protobuf serialization of Nanopolish output.
+		
+		Returns
+		-------
+		
+		"""
+	
+	def __next__(self):
+		"""
+		For iterating through lines in linear time. Use standard for loop. 
+		
+		Parameters
+		----------
+		
+		Returns
+		-------
+		(event_align, event)
+			Pair consisting of event_align object (which generally has more events) and specific event on current line.
+			Returned event can be also found as element of event_align.events.
+		
+		"""
+	
+	def get_line_cnt(self):
+		"""
+		Returns number of lines in original nanopolish txt output.
+		
+		Parameters
+		----------
+		
+		Returns
+		-------
+		line_cnt: int
+		
+		"""
+	
+	def get_line(self, line_number):
+		"""
+		Method works in O(logn) where n is number of event_aligns. If you want to iterate through lines
+		in linear time don't use this method. 
+		
+		Parameters
+		----------
+		line_number: int
+		
+		Returns
+		-------
+		(event_align, event)
+			Pair consisting of event_align object (which generally has more events) and specific event on given line.
+			Returned event can be also found as element of event_align.events.
+		
+		"""
+	
+	def get_event_align(self, position, read_index=0):
+		"""
+		Raises key error if (position, read_index) does not exist in data.  
+		Read_index default is zero for convenience. E.g. if someone is working with
+		only one reference contig read.
+		
+		Parameters
+		----------
+		position: int
+		Position in reference read. 
+		read_index: int
+			Index of contig, because reference can have more reads.
+		
+		Returns
+		-------
+		event_align object
+		
+		"""
+	
+	def get_model(self, position, read_index=0):
+		"""
+		
+		Parameters
+		----------
+		position: int
+		Position in reference read.
+		read_index: int
+			Index of contig, because reference can have more reads. 
+		
+		Returns
+		-------
+		(model_kmer, model_mean, model_stdv)
+		
+		"""
+\end{lstlisting}
+
+\end{document}
