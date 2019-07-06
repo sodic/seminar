@@ -6,10 +6,12 @@
 \usepackage{wrapfig, framed, caption}
 \usepackage{float}
 \usepackage[framemethod=TikZ]{mdframed}
+\usepackage[final]{pdfpages}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
+\renewcommand{\baselinestretch}{1.0} 
 
 \lstset{frame=tb,
 	language=C++,
@@ -37,8 +39,6 @@
 \maketitle
 \tableofcontents
 \newpage
-\chapter{Introduction}
-
 
 \chapter{Nanopolish}
 
@@ -239,6 +239,7 @@ A usage example is given below.
 	breakatwhitespace=true,
 	tabsize=3
 }
+
 \begin{lstlisting}
 
 
@@ -297,142 +298,11 @@ except KeyError:
 # raises KeyError if there is no such
 print(data.get_events(9))
 \end{lstlisting}
-\section{Documentation}
-\begin{lstlisting}
-class NanopolishOutputParser:
-	"""
-	Nanopolish txt output parser, produces protobuf serialization if the 'serialize' method is called.
-	"""
-	
-	def __init__(self, path):
-		"""
-		
-		Parameters
-		----------
-		path: string
-			Path to file containing nanopolish output data.
-		
-		Returns
-		-------
-	
-		"""
-	
-	def serialize(self, path):
-		"""
-		Writes the protobuf serialization string into the given file.
-		Data is sorted by pairs (read_index, position).
-		
-		Parameters
-		----------
-		path: string
-			Path to the file where serialized string of data should be written.
-		
-		Returns
-		-------
-		
-		"""
+\newpage
 
 
+\includepdf[pages=-]{docs.pdf}
 
-class NanopolishOutputData:
-	"""
-	Interface to nanopolish output data. Takes a path to protobuf serialized
-	nanopolish output data and offers methods for data retrieval.
-	"""
-	
-	def __init__(self, path):
-		"""
-		
-		Parameters
-		----------
-		path: string
-			Path to the file containing the protobuf serialization of Nanopolish output.
-		
-		Returns
-		-------
-		
-		"""
-	
-	def __next__(self):
-		"""
-		For iterating through lines in linear time. 
-		
-		Parameters
-		----------
-		
-		Returns
-		-------
-		(event_align, event)
-			A tuple consisting of an event_align object (which generally has more events) and a specific event on the current line.
-			The returned event can be also found as an element of event_align.events.
-		
-		"""
-	
-	def get_line_cnt(self):
-		"""
-		Returns the number of lines in the original nanopolish text output.
-		
-		Parameters
-		----------
-		
-		Returns
-		-------
-		line_cnt: int
-		
-		"""
-	
-	def get_line(self, line_number):
-		"""
-		Method works in O(logn) where n is number of event_aligns. If you want to iterate through lines
-		in linear time, don't use this method. 
-		
-		Parameters
-		----------
-		line_number: int
-		
-		Returns
-		-------
-		(event_align, event)
-			A tuple consisting of an event_align object (which generally has more events) and a specific event on given line.
-			The returned event can be also found as an element of event_align.events.
-		
-		"""
-	
-	def get_event_align(self, position, read_index=0):
-		"""
-		Raises a KeyError if (position, read_index) does not exist in data.  
-		The default value for Read_index is 0 for convenience. E.g. if someone is working with
-		only one reference contig read.
-		
-		Parameters
-		----------
-		position: int
-		Position in reference read. 
-		read_index: int
-			Index of the contig, because the reference can consist of multiple contigs.
-		
-		Returns
-		-------
-		event_align object
-		
-		"""
-	
-	def get_model(self, position, read_index=0):
-		"""
-		
-		Parameters
-		----------
-		position: int
-		Position in reference read.
-		read_index: int
-			Index of the contig, because the reference can consist of multiple contigs.
-		
-		Returns
-		-------
-		(model_kmer, model_mean, model_stdv)
-		
-		"""
-\end{lstlisting}
 
 \bibliography{literatura}
 \bibliographystyle{fer}
