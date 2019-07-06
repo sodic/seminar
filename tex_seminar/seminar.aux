@@ -1,5 +1,6 @@
 \relax 
 \providecommand\hyper@newdestlabel[2]{}
+\providecommand\zref@newlabel[2]{}
 \providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
 \HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
 \global\let\oldcontentsline\contentsline
@@ -16,10 +17,49 @@
 \gdef\HyperFirstAtBeginDocument#1{#1}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
-\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{2}{section.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {2}Nanopolish}{2}{section.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Protobuf}{3}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Program specification}{3}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Usage}{4}{subsection.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}References}{6}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Documentation}{7}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}}
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\citation{nanopolish}
+\@writefile{toc}{\contentsline {chapter}{\numberline {2}Nanopolish}{2}{chapter.2}}
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{toc}{\contentsline {section}{\numberline {2.1}General Information}{2}{section.2.1}}
+\@writefile{toc}{\contentsline {section}{\numberline {2.2}Nanopolish Eventalign}{2}{section.2.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2.1}Motivation}{2}{subsection.2.2.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2.2}Nanopore Sequencing}{2}{subsection.2.2.2}}
+\newlabel{sequencing}{{2.2.2}{2}{Nanopore Sequencing}{subsection.2.2.2}{}}
+\citation{simpson}
+\citation{simpson}
+\citation{simpson}
+\citation{simpson}
+\@writefile{lof}{\contentsline {figure}{\numberline {2.1}{\ignorespaces The black dots show the current samples recorded by the instrument. A single read line marks all samples taken from a single $k$-mer. After each significant jump, it is concluded that a new $k$-mer resides in the pore \citep  {simpson}.\relax }}{4}{figure.caption.2}}
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{sampling}{{2.1}{4}{The black dots show the current samples recorded by the instrument. A single read line marks all samples taken from a single $k$-mer. After each significant jump, it is concluded that a new $k$-mer resides in the pore \citep {simpson}.\relax }{figure.caption.2}{}}
+\pgfsyspdfmark {pgfid1}{6526379}{20026720}
+\@writefile{lot}{\contentsline {table}{\numberline {2.1}{\ignorespaces A possible pore model for $6$-mers (as in our case). The table has a total of $4^6 = 4069$ rows, one for every possible $6$-mer. The numbers are made up for illustration purposes. As an example, the samples taken for the $6$-mer \texttt  {AAAAAA} is are expected to be drawn from the distribution $\mathcal  {N}(66.78, 3.10)$ \citep  {simpson}.\relax }}{5}{table.caption.3}}
+\newlabel{poreModel}{{2.1}{5}{A possible pore model for $6$-mers (as in our case). The table has a total of $4^6 = 4069$ rows, one for every possible $6$-mer. The numbers are made up for illustration purposes. As an example, the samples taken for the $6$-mer \texttt {AAAAAA} is are expected to be drawn from the distribution $\mathcal {N}(66.78, 3.10)$ \citep {simpson}.\relax }{table.caption.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2.3}The Eventalign Algorithm}{5}{subsection.2.2.3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2.4}The Eventalign Output Format}{5}{subsection.2.2.4}}
+\@writefile{lot}{\contentsline {table}{\numberline {2.2}{\ignorespaces The data eventalign reports after performing the alignment. The last three columns are available only if additional sampling data was saved to the HDF5 file. The index in the reference is unambiguously determined by the \texttt  {position} and the \texttt  {contig}.\relax }}{6}{table.caption.4}}
+\newlabel{nanopolishOutput}{{2.2}{6}{The data eventalign reports after performing the alignment. The last three columns are available only if additional sampling data was saved to the HDF5 file. The index in the reference is unambiguously determined by the \texttt {position} and the \texttt {contig}.\relax }{table.caption.4}{}}
+\citation{protobuf}
+\@writefile{toc}{\contentsline {chapter}{\numberline {3}Protobuf}{7}{chapter.3}}
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{toc}{\contentsline {section}{\numberline {3.1}General Information}{7}{section.3.1}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.2}The Specification}{7}{section.3.2}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {4}The Program}{9}{chapter.4}}
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{toc}{\contentsline {section}{\numberline {4.1}Program specification}{9}{section.4.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1.1}Usage}{9}{subsection.4.1.1}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.2}Documentation}{11}{section.4.2}}
+\bibdata{literatura}
+\bibcite{simpson}{{1}{2015}{{Simpson}}{{}}}
+\bibcite{nanopolish}{{2}{2019}{{Simpson Lab}}{{}}}
+\bibcite{protobuf}{{3}{2019}{{Wikipedia}}{{}}}
+\bibstyle{fer}
+\@writefile{toc}{\contentsline {chapter}{\numberline {5}Bibliography}{16}{chapter.5}}
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}

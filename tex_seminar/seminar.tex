@@ -1,9 +1,11 @@
-\documentclass[]{article}
-\usepackage[margin=1.2in]{geometry}
+\documentclass[times, utf, seminar]{fer}
+
 \usepackage{listings}
 \usepackage{hyperref}
 \usepackage{color}
-
+\usepackage{wrapfig, framed, caption}
+\usepackage{float}
+\usepackage[framemethod=TikZ]{mdframed}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -29,23 +31,135 @@
 %opening
 \title{Seminar}
 \author{Dario Babojelić, Filip Sodić}
-
+\voditelj{Mile Šikić}
 \begin{document}
 
 \maketitle
 \tableofcontents
 \newpage
-
-\section{Introduction}
-\section{Nanopolish}
+\chapter{Introduction}
 
 
-\newpage
-\section{Protobuf}
+\chapter{Nanopolish}
+
+\section{General Information}
+\emph{Nanopolish}
+\footnote{\url{https://github.com/jts/nanopolish}}
+is a software package for signal-level analysis of Oxford Nanopore sequencing data.
+
+
+The package, among several other features, contains a module for aligning signal events with a reference genome. This paper will focus primarily on this feature. Nanopolish also provides a base modification detector of its own. This module was not explored and will not be further discussed in this paper.
+
+The usage instructions on both modules can be found in the official documentation \citep{nanopolish}.
+
+\section{Nanopolish Eventalign}
+
+\subsection{Motivation}
+As previously mentioned, the \emph{eventalign} module is used to align events or “squiggles” to a reference genome. This process provides an insight into to the low
+level signaling information, which could in turn help with discovering subtle differences in
+the electric current. Such small variations can hint at base modifications. This project's main goal was understanding this tool and deciding whether it can be of assistance in the process of generating, interpreting or comparing modified signal data, which would then be used in building a new DNA base modification detector.
+
+\subsection{Nanopore Sequencing}\label{sequencing}
+
+The prerequisite to explaining the eventalign algorithm is understanding the nanopore
+sequencing process.
+
+A nanopore sequencer threads a single strand of DNA through a pore embedded in a membrane. A constant and continuous signal of electric current flows through the membrane and over the pore. As it transits the pore, the DNA molecule partially blocks the current causing the measured signal to deviate, which is recorded by an instrument. At any given time, the current
+is affected by a subsequence of $k$ contiguous bases residing in the pore. $k$ is most commonly equal to either $5$ or $6$.
+
+The sampling frequency of the sequencer is much greater than the rate at which the molecule passes through the pore.
+This property entails two important characteristics:
+\begin{enumerate}
+	\item Two adjacent recorded $k$-mers differ only in the last base (the bases pass through the pore in a sliding window fashion).
+	\item Each $k$-mer is recorded multiple times.
+\end{enumerate}
+Both of these properties help with eliminating the noise and correctly inferring the bases.
+Whenever a new base enters the pore, we expect to see a relatively significant jump in the current. This is visually represented with figure \ref{sampling}.
+
+The event detection software saves its measurements into a HDF5 file. With the assumption that all samples follow a normal distribution, the mean and the standard deviation are calculated for every $k$-mer. This two numbers define an \textbf{event}. The HDF5 typically contains only
+the event data, as saving the raw signal would be impractical due to its large size. All events are indexed sequentially.
+
+\begin{figure}[H]
+	\begin{mdframed}[roundcorner=7pt]                                
+	\centerline{\includegraphics[scale=0.8, clip]{simulation.pdf}}%
+	\caption{The black dots show the current samples recorded by the instrument. A single
+	read line marks all samples taken from a single $k$-mer. After each significant jump,
+	it is concluded that a new $k$-mer resides in the pore \citep{simpson}.}
+	\label{sampling}
+	\end{mdframed}                                                  
+\end{figure}  
+
+To help translate events into a DNA sequence, Oxford Nanopore provides a pore model describing the expected current signal for each possible $k$-mer. This comes in the form of $4^k$ normal distributions in a table similar to \ref{poreModel}\footnote{The real table is available at \url{https://github.com/jts/nanopolish/blob/b9dc627e73816a415e4b96b14e8a8bf53622a6c9/etc/r9-models/r9.4_450bps.nucleotide.6mer.template.model}}. The base calling is done by finding the most fitting distribution for each event (based on the distribution calculated from its samples) while taking into account the properties listed earlier.
+
+\begin{table}
+	\centering
+	\begin{tabular}{l l l l}
+		$k$-mer & $\mu$ & $\sigma$  \\	
+		\hline{}
+		\texttt{AAAAAA} & 66.78 & 3.10  \\
+		\texttt{AAAAAC} & 72.67 & 2.19 \\
+		\texttt{AAAAAG} & 69.34 & 1.68 \\
+		\texttt{AAAAAT} & 70.23 & 0.43 \\
+		\texttt{AAAACA} & 67.34 & 1.26 \\
+		. . .  & . . . & . . .  \\
+		\texttt{TTTTTG} & 87.11 & 2.88 \\
+		\texttt{TTTTTT} & 96.89 & 3.60 \\
+	\end{tabular}
+	\caption{A possible pore model for $6$-mers (as in our case). The table has a total of $4^6 = 4069$ rows, one for every possible $6$-mer. The numbers are made up for illustration purposes. As an example, the samples taken for the $6$-mer \texttt{AAAAAA} is are expected to be drawn from the distribution $\mathcal{N}(66.78, 3.10)$ \citep{simpson}.}.
+	\label{poreModel}
+\end{table}
+
+\subsection{The Eventalign Algorithm}
+As opposed to most approaches which align two DNA sequences to each other, eventalign aligns 
+the signal data emitted by a nanopore to a reference genome. The algorithm is based on a hidden Markov model which uses the provided reference sequence as its backbone. It depends on an existing base space alignment between the read and the reference. On a high level, it takes the following data:
+\begin{enumerate}
+	\item A set of raw read signals (HDF5)
+	\item The corresponding base called strings for the reads (FASTA or FASTQ)
+	\item A reference string
+	\item An alignments between the read strings (2) and the reference string (3) (BAM)
+\end{enumerate}
+It then re-aligns the reads in event space and produces a text representation of the alignments.
+\subsection{The Eventalign Output Format}
+Eventalign's output comes in a form of a single space delimited text file containing all relevant data. Each row represents one alignment with its data split into columns which are listed and briefly explained in the table \ref{nanopolishOutput}.
+
+(position i ime contiga zajedno jednoznačno određuju poziciju u referenci
+
+\begin{table}
+	\centering
+	\begin{tabular}{l|p{10cm}}
+		Column name & Explanation\\
+		\hline
+	\texttt{contig} & The name of the contig an event was aligned to. \\
+	\texttt{position} & The position inside the contig. A missing position indicates that the concerned part of the reference wasn't successfully mapped to the signal. \\
+	\texttt{reference\_kmer} & The $k$-mer found at this position. \\       
+	\texttt{read\_index} & The contig's index. This depends on the nanopolish's internal workings and the number is mostly insignificant. \\
+	\texttt{strand}  & The strand indicator. Possibly contains spurious data. A better approach if to compare the \texttt{reference\_kmer} against the \texttt{model\_kmer}. \\
+	\texttt{event} &  The event's index in the HDF5 file, indices are assigned sequentially, see \ref{sequencing}\\
+	\texttt{event\_level\_mean} & The mean extracted from the event's samples (see \ref{sequencing}). \\
+	\texttt{event\_stdv} & The standard deviation extracted from the event's samples (see \ref{sequencing}). \\
+	\texttt{event\_length} & The time interval over which all of the event's samples were collected. \\
+	\texttt{model\_kmer} & The $k$-mer from the pore model table found to be most fitting to the distribution of the measured samples (see \ref{sequencing} and table \ref{poreModel}). \\
+	\texttt{model\_mean} & The samples for the \texttt{model\_kmer} are expected to be drawn from a normal distribution with this mean (table \ref{poreModel}). \\
+	\texttt{model\_stdv} & The samples for the \texttt{model\_kmer} are expected to be drawn from a normal distribution with this standard deviation (table \ref{poreModel}) \\
+	\texttt{standardized\_level} & dario Računa se po formuli koju je Dario napisao na slack. Ja se ovog ne sjecam, znas ti? \\
+	\texttt{start\_index} & The index of the first sample contained in the event. \\               
+	\texttt{end\_index} & The first index after the last sample contained in the event. \\
+	\texttt{samples} & All of the event's samples ($\texttt{end\_index} - \texttt{start\_index}$ in total).     
+	\end{tabular}
+	\caption{The data eventalign reports after performing the alignment. The last three columns are available only if additional sampling data was saved to the HDF5 file. The index in the reference is unambiguously determined by the \texttt{position} and the \texttt{contig}.}
+	\label{nanopolishOutput}
+\end{table}
+
+\chapter{Protobuf}
+\section{General Information}
+\textit{Protocol Buffers (Protobuf)}\footnote{\url{https://developers.google.com/protocol-buffers/}} is a method of serializing structured data. It involves an interface description language that describes the structure of some data and a program that generates source code from that description for generating or parsing a stream of bytes that represents the structured data.
+
+Google developed Protocol Buffers for use internally and has provided a code generator for multiple languages under an open source license \citep{protobuf}.
+\section{The Specification}
 We created a protobuf message specification for easier access to nanopolish 
 output data. Protobuf is used to serialize and retrieve structured data.
-\footnote{\url{https://developers.google.com/protocol-buffers/}}
-As you can see protobuf fields match nanopolish output format. 
+
+The protobuf fields correspond with the nanopolish output format. 
 
 \begin{lstlisting}
 syntax = "proto3";
@@ -86,26 +200,31 @@ message NanopolishData {
 \end{lstlisting}
 
 
-
+\chapter{The Program}
 \section{Program specification}
-Program 
+The program 
 \footnote{https://github.com/sodic/seminar/tree/master/src}
-was designed to make it easier to manipulate nanopolish eventalign 
-output. It can parse nanopolish text output, serialize it as protobuf, 
-deserialize and provide access to data. It was written in Python 3 and does
-not depend on any non-standard module. If you wish to change protobuf message
-specification you must install protocol buffer compiler for Python
+was designed to enable easier manipulation of nanopolish eventalign 
+output data. It can parse the text output from nanopolish, serialize it as protobuf and 
+deserialize the protobuf to access the data. It was written in Python 3.6x and
+depends on the two non-built-in modules (both can be installed using \texttt{pip}):
+\begin{enumerate}
+	\item numpy
+	\item protobuf
+\end{enumerate}
+ If you wish to change the protobuf message
+specification, you must install the protocol buffer compiler for Python 3
 \footnote{https://github.com/protocolbuffers/protobuf}.
-Otherwise you can use \textit{nanopolish\_pb2.py} file which is generated from
+Otherwise, you can use the \textit{nanopolish\_pb2.py} file which was generated from
 \textit{nanopolish.proto}.
 
 \subsection{Usage}
-Program consists of two classes, \textit{NanopolishOutputParser.py} and 
-\textit{NanopolishOutputData.py}. First class can parse nanopolish 
-eventalign text output and write a protobuf serialization string in file.
-Second class is a interface to nanopolish eventalign output data. It takes 
-path to protobuf serialized data and offers methods for data retrieval. 
-Example of usage is given below. 
+The program consists of two classes: \textit{NanopolishOutputParser.py} and 
+\textit{NanopolishOutputData.py}. The former can parse nanopolish 
+eventalign text output and write a protobuf serialization string into a file, while
+the latter is an interface for accessing the nanopolish eventalign output data. It requires 
+a file path to protobuf serialized data and offers methods for data retrieval. 
+A usage example is given below. 
 
 
 \lstset{frame=tb,
@@ -182,16 +301,11 @@ except KeyError:
 # raises KeyError if there is no such
 print(data.get_events(9))
 \end{lstlisting}
-\newpage
-
-\section{References}
-\newpage
-
 \section{Documentation}
 \begin{lstlisting}
 class NanopolishOutputParser:
 	"""
-	Nanopolish txt output parser, produces protobuf serialization if 'serialize' method is called.
+	Nanopolish txt output parser, produces protobuf serialization if the 'serialize' method is called.
 	"""
 	
 	def __init__(self, path):
@@ -209,13 +323,13 @@ class NanopolishOutputParser:
 	
 	def serialize(self, path):
 		"""
-		Writes protobuf serialization string in file.
+		Writes the protobuf serialization string into the given file.
 		Data is sorted by pairs (read_index, position).
 		
 		Parameters
 		----------
 		path: string
-			Path to file where serialized string of data should be written.
+			Path to the file where serialized string of data should be written.
 		
 		Returns
 		-------
@@ -226,7 +340,7 @@ class NanopolishOutputParser:
 
 class NanopolishOutputData:
 	"""
-	Interface to nanopolish output data. Takes path to protobuf serialized
+	Interface to nanopolish output data. Takes a path to protobuf serialized
 	nanopolish output data and offers methods for data retrieval.
 	"""
 	
@@ -236,7 +350,7 @@ class NanopolishOutputData:
 		Parameters
 		----------
 		path: string
-			Path to protobuf serialization of Nanopolish output.
+			Path to the file containing the protobuf serialization of Nanopolish output.
 		
 		Returns
 		-------
@@ -245,7 +359,7 @@ class NanopolishOutputData:
 	
 	def __next__(self):
 		"""
-		For iterating through lines in linear time. Use standard for loop. 
+		For iterating through lines in linear time. 
 		
 		Parameters
 		----------
@@ -253,14 +367,14 @@ class NanopolishOutputData:
 		Returns
 		-------
 		(event_align, event)
-			Pair consisting of event_align object (which generally has more events) and specific event on current line.
-			Returned event can be also found as element of event_align.events.
+			A tuple consisting of an event_align object (which generally has more events) and a specific event on the current line.
+			The returned event can be also found as an element of event_align.events.
 		
 		"""
 	
 	def get_line_cnt(self):
 		"""
-		Returns number of lines in original nanopolish txt output.
+		Returns the number of lines in the original nanopolish text output.
 		
 		Parameters
 		----------
@@ -274,7 +388,7 @@ class NanopolishOutputData:
 	def get_line(self, line_number):
 		"""
 		Method works in O(logn) where n is number of event_aligns. If you want to iterate through lines
-		in linear time don't use this method. 
+		in linear time, don't use this method. 
 		
 		Parameters
 		----------
@@ -283,15 +397,15 @@ class NanopolishOutputData:
 		Returns
 		-------
 		(event_align, event)
-			Pair consisting of event_align object (which generally has more events) and specific event on given line.
-			Returned event can be also found as element of event_align.events.
+			A tuple consisting of an event_align object (which generally has more events) and a specific event on given line.
+			The returned event can be also found as an element of event_align.events.
 		
 		"""
 	
 	def get_event_align(self, position, read_index=0):
 		"""
-		Raises key error if (position, read_index) does not exist in data.  
-		Read_index default is zero for convenience. E.g. if someone is working with
+		Raises a KeyError if (position, read_index) does not exist in data.  
+		The default value for Read_index is 0 for convenience. E.g. if someone is working with
 		only one reference contig read.
 		
 		Parameters
@@ -299,7 +413,7 @@ class NanopolishOutputData:
 		position: int
 		Position in reference read. 
 		read_index: int
-			Index of contig, because reference can have more reads.
+			Index of the contig, because the reference can consist of multiple contigs.
 		
 		Returns
 		-------
@@ -315,7 +429,7 @@ class NanopolishOutputData:
 		position: int
 		Position in reference read.
 		read_index: int
-			Index of contig, because reference can have more reads. 
+			Index of the contig, because the reference can consist of multiple contigs.
 		
 		Returns
 		-------
@@ -324,4 +438,6 @@ class NanopolishOutputData:
 		"""
 \end{lstlisting}
 
+\bibliography{literatura}
+\bibliographystyle{fer}
 \end{document}

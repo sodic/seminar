@@ -1,7 +1,16 @@
-\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
-\BOOKMARK [1][-]{section.2}{Nanopolish}{}% 2
-\BOOKMARK [1][-]{section.3}{Protobuf}{}% 3
-\BOOKMARK [1][-]{section.4}{Program specification}{}% 4
-\BOOKMARK [2][-]{subsection.4.1}{Usage}{section.4}% 5
-\BOOKMARK [1][-]{section.5}{References}{}% 6
-\BOOKMARK [1][-]{section.6}{Documentation}{}% 7
+\BOOKMARK [0][-]{chapter.1}{Introduction}{}% 1
+\BOOKMARK [0][-]{chapter.2}{Nanopolish}{}% 2
+\BOOKMARK [1][-]{section.2.1}{General Information}{chapter.2}% 3
+\BOOKMARK [1][-]{section.2.2}{Nanopolish Eventalign}{chapter.2}% 4
+\BOOKMARK [2][-]{subsection.2.2.1}{Motivation}{section.2.2}% 5
+\BOOKMARK [2][-]{subsection.2.2.2}{Nanopore Sequencing}{section.2.2}% 6
+\BOOKMARK [2][-]{subsection.2.2.3}{The Eventalign Algorithm}{section.2.2}% 7
+\BOOKMARK [2][-]{subsection.2.2.4}{The Eventalign Output Format}{section.2.2}% 8
+\BOOKMARK [0][-]{chapter.3}{Protobuf}{}% 9
+\BOOKMARK [1][-]{section.3.1}{General Information}{chapter.3}% 10
+\BOOKMARK [1][-]{section.3.2}{The Specification}{chapter.3}% 11
+\BOOKMARK [0][-]{chapter.4}{The Program}{}% 12
+\BOOKMARK [1][-]{section.4.1}{Program specification}{chapter.4}% 13
+\BOOKMARK [2][-]{subsection.4.1.1}{Usage}{section.4.1}% 14
+\BOOKMARK [1][-]{section.4.2}{Documentation}{chapter.4}% 15
+\BOOKMARK [0][-]{chapter.5}{Bibliography}{}% 16
