@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.10.23)  6 JUL 2019 02:34
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.10.23)  6 JUL 2019 02:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1433,25 +1433,25 @@ File: simulation.pdf Graphic file (type pdf)
 Package pdftex.def Info: simulation.pdf  used on input line 84.
 (pdftex.def)             Requested size: 378.66518pt x 378.66518pt.
 LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <10.95> not available
-(Font)              Font shape `T1/ptm/b/n' tried instead on input line 87.
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 86.
 Package mdframed Info: mdframed inside float 
- mdframed uses option nobreak mdframed on input line 89.
+ mdframed uses option nobreak mdframed on input line 88.
 Package mdframed Info: mdframed inside a box 
- mdframed uses option nobreak mdframed on input line 89.
+ mdframed uses option nobreak mdframed on input line 88.
  [3]
-Underfull \hbox (badness 10000) in paragraph at lines 92--92
+Underfull \hbox (badness 10000) in paragraph at lines 91--91
 [][][]\T1/ptm/m/n/10 The real ta-ble is avail-able at []$\T1/pcr/m/n/10 https :
  / / github . com / jts / nanopolish / blob /
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 92--92
+Underfull \hbox (badness 10000) in paragraph at lines 91--91
 \T1/pcr/m/n/10 b9dc627e73816a415e4b96b14e8a8bf53622a6c9 / etc / r9-[]models / r
 9 . 4 _ 450bps .
  []
 
 [4 <./simulation.pdf>]
-Overfull \hbox (25.56255pt too wide) in paragraph at lines 129--149
+Overfull \hbox (25.56255pt too wide) in paragraph at lines 126--146
  [][] 
  []
 
@@ -1471,14 +1471,14 @@ Chapter 5.
 ) [16
 
 ]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 443.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 443.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 439.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 439.
  (./seminar.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 443.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 443.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 439.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 439.
 Package rerunfilecheck Info: File `seminar.out' has not changed.
 (rerunfilecheck)             Checksum: E3965F623E853005231A445E56669264;972.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 443.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 439.
  ) 
 Here is how much of TeX's memory you used:
  30556 strings out of 492982
@@ -1502,7 +1502,7 @@ mf-dist/fonts/type1/urw/helvetic/uhvro8a.pfb></usr/share/texlive/texmf-dist/fon
 ts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/ti
 mes/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb
 >
-Output written on seminar.pdf (18 pages, 190108 bytes).
+Output written on seminar.pdf (18 pages, 189988 bytes).
 PDF statistics:
  595 PDF objects out of 1000 (max. 8388607)
  543 compressed objects within 6 object streams

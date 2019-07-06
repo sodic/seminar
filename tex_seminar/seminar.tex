@@ -48,7 +48,7 @@
 is a software package for signal-level analysis of Oxford Nanopore sequencing data.
 
 
-The package, among several other features, contains a module for aligning signal events with a reference genome. This paper will focus primarily on this feature. Nanopolish also provides a base modification detector of its own. This module was not explored and will not be further discussed in this paper.
+The package, among several other features, contains a module for aligning signal events with a reference genome. This paper will focus primarily on this feature. Nanopolish also provides a base modification detector of its own. This module was not explored and will not be further discussed.
 
 The usage instructions on both modules can be found in the official documentation \citep{nanopolish}.
 
@@ -70,21 +70,20 @@ is affected by a subsequence of $k$ contiguous bases residing in the pore. $k$ i
 The sampling frequency of the sequencer is much greater than the rate at which the molecule passes through the pore.
 This property entails two important characteristics:
 \begin{enumerate}
-	\item Two adjacent recorded $k$-mers differ only in the last base (the bases pass through the pore in a sliding window fashion).
+	\item Two adjacent recorded $k$-mers differ only in the last base (ignoring the ordering) In other words, bases pass through the pore in a sliding window fashion.
 	\item Each $k$-mer is recorded multiple times.
 \end{enumerate}
 Both of these properties help with eliminating the noise and correctly inferring the bases.
 Whenever a new base enters the pore, we expect to see a relatively significant jump in the current. This is visually represented with figure \ref{sampling}.
 
 The event detection software saves its measurements into a HDF5 file. With the assumption that all samples follow a normal distribution, the mean and the standard deviation are calculated for every $k$-mer. This two numbers define an \textbf{event}. The HDF5 typically contains only
-the event data, as saving the raw signal would be impractical due to its large size. All events are indexed sequentially.
+the event data, as saving the raw signal would be impractical due to its large size (there are exceptions). All events are indexed sequentially.
 
 \begin{figure}[H]
 	\begin{mdframed}[roundcorner=7pt]                                
 	\centerline{\includegraphics[scale=0.8, clip]{simulation.pdf}}%
 	\caption{The black dots show the current samples recorded by the instrument. A single
-	read line marks all samples taken from a single $k$-mer. After each significant jump,
-	it is concluded that a new $k$-mer resides in the pore \citep{simpson}.}
+	red line marks all samples taken from a single $k$-mer (placed at their mean). After each significant jump, it is concluded that a new $k$-mer resides in the pore \citep{simpson}.}
 	\label{sampling}
 	\end{mdframed}                                                  
 \end{figure}  
@@ -110,7 +109,7 @@ To help translate events into a DNA sequence, Oxford Nanopore provides a pore mo
 \end{table}
 
 \subsection{The Eventalign Algorithm}
-As opposed to most approaches which align two DNA sequences to each other, eventalign aligns 
+As opposed to most approaches which align two DNA sequences to each other, eventalign maps 
 the signal data emitted by a nanopore to a reference genome. The algorithm is based on a hidden Markov model which uses the provided reference sequence as its backbone. It depends on an existing base space alignment between the read and the reference. On a high level, it takes the following data:
 \begin{enumerate}
 	\item A set of raw read signals (HDF5)
@@ -120,16 +119,14 @@ the signal data emitted by a nanopore to a reference genome. The algorithm is ba
 \end{enumerate}
 It then re-aligns the reads in event space and produces a text representation of the alignments.
 \subsection{The Eventalign Output Format}
-Eventalign's output comes in a form of a single space delimited text file containing all relevant data. Each row represents one alignment with its data split into columns which are listed and briefly explained in the table \ref{nanopolishOutput}.
-
-(position i ime contiga zajedno jednoznačno određuju poziciju u referenci
+Eventalign's output comes in a form of a single space delimited text file containing all relevant data. Each row represents one alignment whose data is split into columns. These columns are listed and briefly explained in the table \ref{nanopolishOutput}.
 
 \begin{table}
 	\centering
 	\begin{tabular}{l|p{10cm}}
 		Column name & Explanation\\
 		\hline
-	\texttt{contig} & The name of the contig an event was aligned to. \\
+	\texttt{contig} & The name of the contig the event was aligned to. \\
 	\texttt{position} & The position inside the contig. A missing position indicates that the concerned part of the reference wasn't successfully mapped to the signal. \\
 	\texttt{reference\_kmer} & The $k$-mer found at this position. \\       
 	\texttt{read\_index} & The contig's index. This depends on the nanopolish's internal workings and the number is mostly insignificant. \\
@@ -141,24 +138,23 @@ Eventalign's output comes in a form of a single space delimited text file contai
 	\texttt{model\_kmer} & The $k$-mer from the pore model table found to be most fitting to the distribution of the measured samples (see \ref{sequencing} and table \ref{poreModel}). \\
 	\texttt{model\_mean} & The samples for the \texttt{model\_kmer} are expected to be drawn from a normal distribution with this mean (table \ref{poreModel}). \\
 	\texttt{model\_stdv} & The samples for the \texttt{model\_kmer} are expected to be drawn from a normal distribution with this standard deviation (table \ref{poreModel}) \\
-	\texttt{standardized\_level} & dario Računa se po formuli koju je Dario napisao na slack. Ja se ovog ne sjecam, znas ti? \\
+	\texttt{standardized\_level} & dario Računa se po formuli koju je Dario napisao na slack. Ja ne znam ovo objasnit, znas ti? \\
 	\texttt{start\_index} & The index of the first sample contained in the event. \\               
 	\texttt{end\_index} & The first index after the last sample contained in the event. \\
 	\texttt{samples} & All of the event's samples ($\texttt{end\_index} - \texttt{start\_index}$ in total).     
 	\end{tabular}
-	\caption{The data eventalign reports after performing the alignment. The last three columns are available only if additional sampling data was saved to the HDF5 file. The index in the reference is unambiguously determined by the \texttt{position} and the \texttt{contig}.}
+	\caption{The column data eventalign reports for each found alignment. The last three columns are available only if additional sampling data was saved to the HDF5 file. The index in the reference is unambiguously determined by the \texttt{position} and the \texttt{contig}.}
 	\label{nanopolishOutput}
 \end{table}
 
 \chapter{Protobuf}
 \section{General Information}
-\textit{Protocol Buffers (Protobuf)}\footnote{\url{https://developers.google.com/protocol-buffers/}} is a method of serializing structured data. It involves an interface description language that describes the structure of some data and a program that generates source code from that description for generating or parsing a stream of bytes that represents the structured data.
+\textit{Protocol Buffers (Protobuf)}\footnote{\url{https://developers.google.com/protocol-buffers/}} is a method of serializing structured data. It involves an interface description language that describes the structure of some data and a program that generates source code from said description for generating or parsing a stream of bytes that represents the structured data.
 
 Google developed Protocol Buffers for use internally and has provided a code generator for multiple languages under an open source license \citep{protobuf}.
 \section{The Specification}
 We created a protobuf message specification for easier access to nanopolish 
 output data. Protobuf is used to serialize and retrieve structured data.
-
 The protobuf fields correspond with the nanopolish output format. 
 
 \begin{lstlisting}
