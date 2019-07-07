@@ -258,9 +258,9 @@
 		\let\footnoterule\relax
 	
 		\begin{center}
-			{\large\sffamily SVEU\v{C}ILI\v{S}TE U ZAGREBU}
+			{\large\sffamily UNIVERSITY OF ZAGREB}
 			
-			{\large\bfseries\sffamily FAKULTET ELEKTROTEHNIKE I RA\v{C}UNARSTVA}
+			{\large\bfseries\sffamily FACULTY OF ELECTRICAL ENGINEERING AND COMPUTING}
 		\end{center}
 		\vfill
 		\begin{center}%
@@ -279,7 +279,7 @@
 			\begin{tabular}[t]{c}%
 	        	\if@radseminar%
 	        	  {\itshape \@author} \\
-	        	  Voditelj: {\itshape \@voditelj}
+	        	  Advisor: {\itshape \@voditelj}
 	        	\else
 				    \@author
 				\fi
@@ -290,7 +290,7 @@
 			{\sffamily\large Zagreb, 
 			\ifcase\month\or
 				sije\v{c}anj\or velja\v{c}a\or o\v{z}ujak\or travanj\or svibanj\or
-	   	 		lipanj\or srpanj\or kolovoz\or rujan\or listopad\or studeni\or
+	   	 		lipanj\or July\or kolovoz\or rujan\or listopad\or studeni\or
 	    			prosinac\fi \space \number\year.%
 	    	}
 		\end{center}
